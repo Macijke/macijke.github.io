@@ -1,65 +1,471 @@
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
-    <title>@macijke</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>macijke.pl | Fullstack Developer</title>
     <style>
-        @keyframes blink {
-            0% {
-                text-shadow: 0 0 10px #fff;
-            }
-            50% {
-                text-shadow: 0 0 20px #fff;
-            }
-            100% {
-                text-shadow: 0 0 10px #fff;
-            }
+        :root {
+            --bg-color: #0d1117;
+            --text-color: #c9d1d9;
+            --accent-color: #58a6ff;
+            --secondary-accent: #238636; /* GitHub Green */
+            --react-color: #61dafb;      /* React Blue */
+            --fullstack-color: #a371f7;  /* Purple for Fullstack */
+            --string-color: #a5d6ff;
+            --keyword-color: #ff7b72;
+            --comment-color: #8b949e;
+            --border-color: #30363d;
+            --card-bg: #161b22;
         }
+
+        * { box-sizing: border-box; }
 
         body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            height: 100vh;
-            font-family: Arial, sans-serif;
-            color: #fff;
-            overflow: hidden;
+            min-height: 100vh;
         }
 
-        .background-video {
+        /* Scanline effect */
+        body::before {
+            content: " ";
+            display: block;
             position: fixed;
-            top: 0;
-            left: 0;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            z-index: -1;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+            background-size: 100% 4px;
+            z-index: 999;
             pointer-events: none;
         }
 
-        .nickname {
-            font-size: 24px;
-            color: white;
-            margin-bottom: 20px;
-            font-weight: bold;
-            animation: blink 2s infinite;
-            text-decoration: none;
-            letter-spacing: 2px;
-            font-weight: 900;
+        .container {
+            max-width: 900px;
+            width: 100%;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
         }
 
-        .discord-image {
-            max-width: 300px;
+        /* --- HEADER --- */
+        header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo { font-size: 1.8rem; font-weight: 700; color: var(--text-color); cursor: pointer; }
+        .logo span { color: var(--accent-color); }
+
+        /* --- VIEWS --- */
+        .view { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .view.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- MAIN LIST VIEW --- */
+        .code-block {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .keyword { color: var(--keyword-color); }
+        .string { color: var(--string-color); }
+        .comment { color: var(--comment-color); font-style: italic; }
+
+        /* Link styling inside code blocks */
+        .code-link {
+            color: var(--string-color);
+            text-decoration: none;
+            border-bottom: 1px dashed var(--string-color);
+            transition: 0.2s;
+        }
+        .code-link:hover {
+            background: rgba(165, 214, 255, 0.1);
+        }
+
+        h2 {
+            color: var(--keyword-color);
+            font-size: 1.4rem;
+            margin-top: 50px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        h3.sub-header {
+            color: var(--text-color);
+            font-size: 1.1rem;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .project-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 20px;
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
+            text-decoration: none;
+            display: block;
+        }
+
+        .project-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent-color);
+            box-shadow: 0 4px 12px rgba(88, 166, 255, 0.1);
+        }
+
+        .project-title {
+            color: var(--accent-color);
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .project-desc { font-size: 0.9rem; color: #8b949e; margin-bottom: 15px; }
+
+        .tech-stack {
+            font-size: 0.8rem;
+            color: var(--comment-color);
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tech-tag {
+            background: rgba(110, 118, 129, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        /* --- PROJECT DETAIL VIEW --- */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            margin-bottom: 20px;
+            transition: 0.2s;
+            text-decoration: none;
+        }
+
+        .back-btn:hover { border-color: var(--accent-color); color: var(--accent-color); }
+
+        .detail-header { margin-bottom: 30px; }
+        .detail-title { font-size: 2rem; color: var(--accent-color); margin: 0 0 10px 0; }
+        .detail-meta { color: var(--comment-color); font-size: 0.9rem; margin-bottom: 20px; }
+
+        .feature-list { list-style: none; padding: 0; }
+        .feature-list li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+        .feature-list li::before {
+            content: ">";
+            color: var(--secondary-accent);
+            position: absolute;
+            left: 0;
+        }
+
+        /* Repository Buttons Container */
+        .repo-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .repo-link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #21262d;
+            border: 1px solid var(--border-color);
+            color: var(--accent-color);
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .repo-link-btn:hover {
+            background: #30363d;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        /* Contact Section Specifics */
+        .contact-action {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        footer {
+            margin-top: 80px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--comment-color);
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
         }
     </style>
 </head>
 <body>
-<video class="background-video" autoplay loop muted>
-    <source src="background.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-</video>
-<a href="https://discord.com/users/469502255750447105" target="_blank" class="nickname">@macijke</a>
-<img class="discord-image" src="https://discord.c99.nl/widget/theme-4/469502255750447105.png" alt="Discord Image">
+
+<div class="container">
+    <header>
+        <div class="logo" onclick="showHome()">macijke<span>.pl</span></div>
+        <div style="font-size: 0.8rem; color: var(--comment-color);">System.out.println(<span class="string">"Fullstack Dev"</span>);</div>
+    </header>
+
+    <div id="view-home" class="view active">
+        <section id="bio">
+            <h2>01. Bio</h2>
+            <div class="code-block">
+                <p>
+                    <span class="keyword">private final</span> String STACK = <span class="string">"Java Junior Developer/FullStack Developer"</span>;<br><br>
+                    <span class="keyword">public void</span> <span class="method">introduction</span>() {<br>
+                    &nbsp;&nbsp;<span class="comment">// Cześć, tu Maciej.</span><br>
+                    &nbsp;&nbsp;<span class="comment">// Tworzę aplikacje internetowe z backendem w Java Spring i frontend React.</span><br>
+                    &nbsp;&nbsp;System.out.println(<span class="string">"Java is good. ☕︎"</span>);<br>
+                    }
+                </p>
+            </div>
+        </section>
+
+        <section id="projects">
+            <h2>02. List&lt;Project&gt; portfolio</h2>
+
+            <h3 class="sub-header">> Aplikacje Główne</h3>
+            <div class="projects-grid">
+
+                <div class="project-card" onclick="showProject('finance')">
+                    <div class="project-title">
+                        <span>💰 FINANCE-FLOW</span>
+                        <span style="font-size: 0.7rem; background: var(--fullstack-color); color: #fff; padding: 2px 6px; border-radius: 4px; font-weight:bold;">FULLSTACK</span>
+                    </div>
+                    <p class="project-desc">
+                        Kompletny system do zarządzania finansami. Backend (Spring Boot) + Frontend (React). Budżetowanie, wykresy i bezpieczeństwo.
+                    </p>
+                    <div class="tech-stack">
+                        <span class="tech-tag">Java Spring</span>
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">PostgreSQL</span>
+                        <span class="tech-tag">Docker</span>
+                    </div>
+                </div>
+
+                <div class="project-card" onclick="showProject('delish')">
+                    <div class="project-title">
+                        <span>🍔 Delish Delivery</span>
+                        <span style="font-size: 0.7rem; background: var(--react-color); color: #000; padding: 2px 6px; border-radius: 4px; font-weight:bold;">REACT</span>
+                    </div>
+                    <p class="project-desc">
+                        Nowoczesna aplikacja frontendowa do zamawiania jedzenia. Responsywny interfejs, koszyk, animacje UI.
+                    </p>
+                    <div class="tech-stack">
+                        <span class="tech-tag">React 18</span>
+                        <span class="tech-tag">TypeScript</span>
+                        <span class="tech-tag">CSS3</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <section id="contact">
+            <h2>03. Kontakt</h2>
+            <div class="code-block">
+                <p>
+                    <span class="comment">// Masz pytanie? Chcesz współpracować?</span><br>
+                    <span class="keyword">const</span> contactInfo = {<br>
+                    &nbsp;&nbsp;email: <a href="mailto:macijke@gmail.com" class="code-link">"macijke@gmail.com"</a>,<br>
+                    &nbsp;&nbsp;github: <a href="https://github.com/macijke" target="_blank" class="code-link">"github.com/Macijke"</a>,<br>
+                    &nbsp;&nbsp;status: <span class="string">"Open for new projects"</span><br>
+                    };
+                </p>
+            </div>
+
+            <div class="contact-action">
+                <a href="mailto:macijke@gmail.com" class="back-btn" style="border-color: var(--accent-color); color: var(--accent-color);">
+                    ✉️ Wyślij wiadomość
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <div id="view-finance" class="view">
+        <button class="back-btn" onclick="showHome()">
+            <span>&larr; cd ..</span>
+        </button>
+
+        <div class="detail-header">
+            <h1 class="detail-title">FINANCE-FLOW SYSTEM</h1>
+            <div class="detail-meta">
+                <span class="keyword">Fullstack Application</span> &bull; Java Spring Boot &bull; React.js
+            </div>
+            <p style="color: #8b949e; max-width: 600px;">
+                Kompleksowa platforma do zarządzania finansami osobistymi. Projekt składa się z wydajnego REST API oraz nowoczesnego interfejsu użytkownika SPA.
+            </p>
+        </div>
+
+        <div class="code-block" style="border-left: 3px solid var(--secondary-accent);">
+            <span class="comment">// 1. Backend Service (Java 17)</span><br>
+            <ul class="feature-list">
+                <li><span style="color: #fff">Core:</span> Spring Boot 3.1, Hibernate, PostgreSQL.</li>
+                <li><span style="color: #fff">Security:</span> Autentykacja JWT, Role-Based Access Control (RBAC).</li>
+                <li><span style="color: #fff">Logic:</span> Zarządzanie transakcjami, budżetowanie, algorytmy analizy.</li>
+            </ul>
+        </div>
+
+        <div class="code-block" style="border-left: 3px solid var(--react-color);">
+            <span class="comment">// 2. Frontend Client (React)</span><br>
+            <ul class="feature-list">
+                <li><span style="color: #fff">UI/UX:</span> Responsywny interfejs użytkownika z wizualizacją danych.</li>
+                <li><span style="color: #fff">Integracja:</span> Konsumpcja API przez Axios, obsługa tokenów JWT.</li>
+                <li><span style="color: #fff">Features:</span> Dashboard z wykresami, edycja budżetów w czasie rzeczywistym.</li>
+            </ul>
+        </div>
+
+        <h3 style="color: var(--string-color)">🛠️ Complete Tech Stack</h3>
+        <div class="tech-stack" style="font-size: 0.9rem; margin-bottom: 30px;">
+            <span class="tech-tag" style="border: 1px solid var(--secondary-accent)">Java 17</span>
+            <span class="tech-tag" style="border: 1px solid var(--secondary-accent)">Spring Boot</span>
+            <span class="tech-tag" style="border: 1px solid var(--secondary-accent)">PostgreSQL</span>
+            <span class="tech-tag" style="border: 1px solid var(--react-color)">React</span>
+            <span class="tech-tag" style="border: 1px solid var(--react-color)">JavaScript</span>
+            <span class="tech-tag" style="border: 1px solid var(--react-color)">Axios</span>
+            <span class="tech-tag">Docker</span>
+            <span class="tech-tag">Git</span>
+        </div>
+
+        <div class="repo-buttons">
+            <a href="https://github.com/Macijke/FINANCE-FLOW" target="_blank" class="repo-link-btn">
+                Backend Repo ☕
+            </a>
+            <a href="https://github.com/Macijke/FINANCE-FLOW-FRONTEND" target="_blank" class="repo-link-btn">
+                Frontend Repo ⚛️
+            </a>
+            <a href="https://financeflow.macijke.pl/" target="_blank" class="repo-link-btn">
+                Live Demo &rarr;
+            </a>
+        </div>
+    </div>
+
+    <div id="view-delish" class="view">
+        <button class="back-btn" onclick="showHome()">
+            <span>&larr; cd ..</span>
+        </button>
+
+        <div class="detail-header">
+            <h1 class="detail-title">DELISH DELIVERY</h1>
+            <div class="detail-meta">
+                Frontend Application &bull; <span class="keyword">React 18</span> &bull; <span class="keyword">TypeScript</span>
+            </div>
+            <p style="color: #8b949e; max-width: 600px;">
+                Nowoczesna platforma do zamawiania jedzenia typu "Food Delivery". Projekt skupia się na responsywności, typowaniu statycznym i płynnym UX.
+            </p>
+        </div>
+
+        <div class="code-block" style="border-left: 3px solid var(--react-color);">
+            <span class="comment">// Features & UI Components</span><br>
+            <ul class="feature-list">
+                <li><span style="color: #fff">Interaktywny koszyk:</span> Zarządzanie zamówieniem w czasie rzeczywistym.</li>
+                <li><span style="color: #fff">Wyszukiwarka:</span> Zaawansowane filtrowanie restauracji i menu.</li>
+                <li><span style="color: #fff">RWD:</span> W pełni responsywny design (Mobile/Desktop).</li>
+                <li><span style="color: #fff">Type Safety:</span> Całość napisana w TypeScript dla stabilności kodu.</li>
+            </ul>
+        </div>
+
+        <h3 style="color: var(--string-color)">🛠️ Tech Stack</h3>
+        <div class="tech-stack" style="font-size: 0.9rem; margin-bottom: 30px;">
+            <span class="tech-tag">React 18</span>
+            <span class="tech-tag">TypeScript</span>
+            <span class="tech-tag">HTML5 / CSS3</span>
+            <span class="tech-tag">NPM</span>
+            <span class="tech-tag">Create React App</span>
+        </div>
+
+        <div class="code-block">
+            <span class="keyword">import</span> { useState } <span class="keyword">from</span> <span class="string">'react'</span>;<br>
+            <br>
+            <span class="keyword">const</span> <span style="color: #d2a8ff;">OrderCart</span> = () => {<br>
+            &nbsp;&nbsp;<span class="keyword">const</span> [items, setItems] = useState([]);<br>
+            &nbsp;&nbsp;<span class="comment">// Logic handles cart updates seamlessly</span><br>
+            &nbsp;&nbsp;<span class="keyword">return</span> <span class="string">&lt;CartView items={items} /&gt;</span>;<br>
+            }
+        </div>
+
+        <a href="https://github.com/Macijke/Delish-Delivery" target="_blank" class="repo-buttons" style="display:inline-block; margin-top:20px; text-decoration:none;">
+            <span class="repo-link-btn">Zobacz kod źródłowy na GitHubie &rarr;</span>
+        </a>
+    </div>
+
+    <footer>
+        <p>
+            <span class="keyword">return</span> <span class="keyword">new</span> Website(<span class="string">"macijke.pl"</span>);<br>
+            &copy; 2026 Macijke
+        </p>
+    </footer>
+</div>
+
+<script>
+    function showProject(projectId) {
+        document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+
+        if(projectId === 'finance') {
+            document.getElementById('view-finance').classList.add('active');
+        } else if (projectId === 'delish') {
+            document.getElementById('view-delish').classList.add('active');
+        }
+        window.scrollTo(0,0);
+    }
+
+    function showHome() {
+        document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+        document.getElementById('view-home').classList.add('active');
+        window.scrollTo(0,0);
+    }
+</script>
+
 </body>
 </html>
